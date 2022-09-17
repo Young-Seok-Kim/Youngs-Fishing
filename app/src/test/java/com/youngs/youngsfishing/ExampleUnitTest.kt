@@ -1,4 +1,4 @@
-package com.example.youngsfishing
+package com.youngs.youngsfishing
 
 import org.junit.Test
 
