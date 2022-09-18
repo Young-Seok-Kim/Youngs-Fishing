@@ -13,11 +13,10 @@ object YoungsContextFunction {
 
     fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit) {
         val jsonObject: JsonObject = JsonObject()
-        jsonObject.addProperty("spot_no", 2)
-        jsonObject.addProperty("spot_name", "테스트")
+        jsonObject.addProperty("spot_name", poiItem.itemName)
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
-        jsonObject.addProperty("address", "잠실")
+        jsonObject.addProperty("address", poiItem.userObject.toString())
         NetworkProgressDialog.start(context)
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("insertFishingSpot.do",

@@ -1,9 +1,12 @@
-package com.youngs.youngsfishing
+package com.youngs.common.kakao
 
+import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.gson.JsonObject
+import com.youngs.common.Define
 import com.youngs.common.YoungsContextFunction.insertFishingSpot
 import com.youngs.common.YoungsFunction
 import com.youngs.common.network.NetworkConnect
@@ -13,12 +16,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 import org.json.JSONArray
 
-class MarkerEventListener(val context: Context): MapView.POIItemEventListener {
+class MarkerEventListener(val context: Context,val contextActivity : Activity): MapView.POIItemEventListener {
+
     override fun onPOIItemSelected(mapView: MapView?, poiItem: MapPOIItem?) {
         // 마커 클릭 시
+        mapView?.invalidate()
+        val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder(Define.KAKAO_NATIVE_KEY,poiItem?.mapPoint, FindGeoToAddressListener(poiItem),contextActivity)
+        reverseGeoCoder.startFindingAddress()
+
+
     }
 
     override fun onCalloutBalloonOfPOIItemTouched(mapView: MapView?, poiItem: MapPOIItem?) {
@@ -35,7 +45,13 @@ class MarkerEventListener(val context: Context): MapView.POIItemEventListener {
 //        builder.setCancelable(false)
         builder.setItems(itemList) { dialog, which ->
             when(which) {
-                0 -> insertFishingSpot(context, poiItem, onSuccess = { -> })
+                0 -> insertFishingSpot(context, poiItem, onSuccess = { ->
+                    if (poiItem.markerType.name == "YellowPin") {
+                        poiItem.markerType = MapPOIItem.MarkerType.BluePin
+
+//                        mapView?.invalidate()
+                    }
+                })
                 1 -> mapView?.removePOIItem(poiItem)    // 마커 삭제
                 2 -> dialog.dismiss()   // 대화상자 닫기
             }

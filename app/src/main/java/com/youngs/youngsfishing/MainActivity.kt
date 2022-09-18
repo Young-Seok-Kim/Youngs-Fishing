@@ -12,25 +12,27 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.youngs.common.Define.PERMISSIONS_REQUEST_CODE
 import com.youngs.common.Define.REQUIRED_PERMISSIONS
 import com.youngs.common.YoungsFunction
+import com.youngs.common.kakao.CustomBalloonAdapter
+import com.youngs.common.kakao.MarkerEventListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.youngsfishing.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
 import org.json.JSONArray
-import kotlinx.coroutines.*
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
-    private val eventListener = MarkerEventListener(this)
+    private val eventListener = MarkerEventListener(this@MainActivity,this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +44,13 @@ class MainActivity : AppCompatActivity() {
 
         goToNowLocation()
 
-        setPin()
+//        setPin()
 
         initButton()
 
         selectFishingSpot()
+
+
 
     }
 
@@ -59,23 +63,34 @@ class MainActivity : AppCompatActivity() {
                 jsonObject,
                 this@MainActivity // 실패했을때 Toast 메시지를 띄워주기 위한 Context
                 , onSuccess = { ->
+                    val permissionCheck = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION)
 
-//                    MyBookListAdapter.instance.clear()
                     val jsonArray : JSONArray = YoungsFunction.stringArrayToJson(NetworkConnect.resultString)
-                    val test = ""
-//
-//                    if (jsonArray.toString() != "[\"\"]") {
-//                        val list = Gson().fromJson(
-//                            jsonArray.toString(),
-//                            Array<MyBookListModel>::class.java
-//                        )
-//
-//                        for (item in list) {
-//                            MyBookListAdapter.instance.addItem(item)
-//                        }
-//                    }
-//                    binding.title.text = "현재 책을 ${MyBookListAdapter.instance.itemCount}권 읽었어요"
-//
+
+                    if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                        val lm: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+                        for (i in 0 until (jsonArray.length() ?:0) ) {
+                            if (jsonArray.get(i).toString().isBlank()) {
+                                continue
+                            }
+                            val uLatitude : Double = (jsonArray.get(i) as JSONObject).get("latitude").toString().toDouble()
+                            val uLongitude : Double = (jsonArray.get(i) as JSONObject).get("longitude").toString().toDouble()
+                            val fishingLocation: MapPoint = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
+
+                            val marker: MapPOIItem = MapPOIItem()
+                            marker.apply {
+                                itemName = (jsonArray.get(i) as JSONObject).get("spot_name").toString()
+                                tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
+                                mapPoint = fishingLocation
+                                markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
+                                selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                                isDraggable = true
+                            }
+                            binding.mapView.addPOIItem(marker)
+                        }
+                    }
+
                     NetworkProgressDialog.end()
                 }
                 , onFailure = {
@@ -111,16 +126,18 @@ class MainActivity : AppCompatActivity() {
 
             val marker: MapPOIItem = MapPOIItem()
             marker.apply {
-                itemName = "Default Marker"
+                itemName = "신규 마커"
                 tag = 0
                 mapPoint = myLocation
-                markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
+                markerType = MapPOIItem.MarkerType.YellowPin // 기본으로 제공하는 BluePin 마커 모양.
                 selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
                 isDraggable = true
             }
             binding.mapView.addPOIItem(marker)
         }
     }
+
+
 
     private fun goToNowLocation()
     {
