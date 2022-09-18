@@ -1,6 +1,7 @@
-package com.youngsbook.common.network
+package com.youngs.common.network
 
 import com.google.gson.JsonObject
+import com.youngs.common.network.ResponseDTO
 import retrofit2.Call
 import retrofit2.http.*
 

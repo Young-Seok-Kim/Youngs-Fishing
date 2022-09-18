@@ -1,8 +1,7 @@
-package com.youngsbook.common.recyclerview
+package com.youngs.common.recyclerview
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.youngs.youngsfishing.R
 
 class ItemClickSupport(recyclerView: RecyclerView) {
     private var mRecyclerView: RecyclerView? = recyclerView
@@ -12,8 +11,7 @@ class ItemClickSupport(recyclerView: RecyclerView) {
             if (mOnItemClickListener != null) {
                 val holder: RecyclerView.ViewHolder = mRecyclerView!!.getChildViewHolder(v!!)
                 mOnItemClickListener!!.onItemDoubleClicked(mRecyclerView,
-                    holder.adapterPosition,
-                    v)
+                    holder.adapterPosition,v)
             }
         }
 

@@ -1,10 +1,9 @@
-package com.youngsbook.common
+package com.youngs.common.recyclerview
 
 import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.youngsbook.common.recyclerview.ItemClickSupport
 import kotlin.math.max
 import kotlin.math.min
 

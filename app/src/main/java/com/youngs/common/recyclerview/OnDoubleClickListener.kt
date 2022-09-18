@@ -1,4 +1,4 @@
-package com.youngsbook.common.recyclerview
+package com.youngs.common.recyclerview
 
 import android.view.View
 import android.view.ViewConfiguration

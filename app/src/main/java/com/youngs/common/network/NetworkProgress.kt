@@ -1,4 +1,4 @@
-package com.youngsbook.common.network
+package com.youngs.common.network
 
 import android.view.View
 import android.view.Window

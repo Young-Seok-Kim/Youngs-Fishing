@@ -1,4 +1,4 @@
-package com.youngsbook.common.network
+package com.youngs.common.network
 
 import androidx.annotation.Keep
 
