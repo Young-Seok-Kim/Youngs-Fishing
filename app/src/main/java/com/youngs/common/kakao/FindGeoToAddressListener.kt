@@ -10,8 +10,7 @@ class FindGeoToAddressListener(val poiItem: MapPOIItem?) : MapReverseGeoCoder.Re
 
         Log.d("p1", p1.toString()) // 주소값
 
-        poiItem?.userObject = p1.toString()
-
+        poiItem?. userObject = p1.toString()
     }
 
     override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {

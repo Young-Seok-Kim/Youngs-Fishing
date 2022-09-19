@@ -67,9 +67,7 @@ class MainActivity : AppCompatActivity() {
 
                     val jsonArray : JSONArray = YoungsFunction.stringArrayToJson(NetworkConnect.resultString)
 
-                    if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
-                        val lm: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+                    if(permissionCheck == PackageManager.PERMISSION_GRANTED) { // 권한 확인
                         for (i in 0 until (jsonArray.length() ?:0) ) {
                             if (jsonArray.get(i).toString().isBlank()) {
                                 continue
@@ -82,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                             marker.apply {
                                 itemName = (jsonArray.get(i) as JSONObject).get("spot_name").toString()
                                 tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
+                                userObject = (jsonArray.get(i) as JSONObject).get("address").toString()
                                 mapPoint = fishingLocation
                                 markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
                                 selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
@@ -89,6 +88,10 @@ class MainActivity : AppCompatActivity() {
                             }
                             binding.mapView.addPOIItem(marker)
                         }
+                    }
+                    else{
+                        Toast.makeText(this@MainActivity, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+                        ActivityCompat.requestPermissions(this@MainActivity, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE )
                     }
 
                     NetworkProgressDialog.end()
