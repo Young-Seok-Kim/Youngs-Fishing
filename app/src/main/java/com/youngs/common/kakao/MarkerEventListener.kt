@@ -19,13 +19,11 @@ import net.daum.mf.map.api.MapView
 
 class MarkerEventListener(  val context: Context, private val contextActivity : Activity): MapView.POIItemEventListener {
 
-
-
     override fun onPOIItemSelected(mapView: MapView?, poiItem: MapPOIItem?) {
         // 마커 클릭 시
 
         val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder(Define.KAKAO_NATIVE_KEY,poiItem?.mapPoint, FindGeoToAddressListener(poiItem),contextActivity)
-        reverseGeoCoder.startFindingAddress()
+        reverseGeoCoder.startFindingAddress() // 위도, 경도로 주소찾기
 
     }
 
@@ -36,6 +34,12 @@ class MarkerEventListener(  val context: Context, private val contextActivity : 
 
     override fun onCalloutBalloonOfPOIItemTouched(mapView: MapView?, poiItem: MapPOIItem, buttonType: MapPOIItem.CalloutBalloonButtonType?) {
         // 말풍선 클릭 시
+
+        val reverseGeoCoder : MapReverseGeoCoder = MapReverseGeoCoder(Define.KAKAO_NATIVE_KEY,
+            poiItem.mapPoint, FindGeoToAddressListener(poiItem),contextActivity)
+
+        reverseGeoCoder.startFindingAddress() // 위도, 경도로 주소찾기
+
         val builder = AlertDialog.Builder(context)
 
         val txtEditText : EditText = EditText(context)
@@ -48,8 +52,9 @@ class MarkerEventListener(  val context: Context, private val contextActivity : 
         builder.setView(txtEditText)
         builder.setItems(itemList) { dialog, which ->
             when(which) {
-                0 -> if (poiItem.tag <= 0 ){
-                    insertFishingSpot(context, poiItem, onSuccess = { ->
+                0 ->
+                    if (poiItem.tag <= 0 ){
+                        insertFishingSpot(context, poiItem, onSuccess = { ->
                             if (poiItem.markerType.name == "YellowPin") {
                                 poiItem.markerType = MapPOIItem.MarkerType.BluePin
                             }

@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.gson.JsonObject
 import com.youngs.common.kakao.CustomBalloonAdapter
+import com.youngs.common.kakao.FindGeoToAddressListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.youngsfishing.MainActivity
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 import org.json.JSONArray
 import org.w3c.dom.Text
@@ -25,7 +27,7 @@ object YoungsContextFunction {
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
-        jsonObject.addProperty("address", if (poiItem.userObject.toString().isBlank()) "" else poiItem.userObject.toString())
+        jsonObject.addProperty("address", if (poiItem?.userObject.toString().isBlank()) "" else poiItem.userObject.toString())
         NetworkProgressDialog.start(context)
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("insertFishingSpot.do",
@@ -39,6 +41,7 @@ object YoungsContextFunction {
 
                     poiItem.itemName = spotName
                     poiItem.tag = insertSpotNo
+
                     NetworkProgressDialog.end()
                 }, onFailure = {
                     NetworkProgressDialog.end()

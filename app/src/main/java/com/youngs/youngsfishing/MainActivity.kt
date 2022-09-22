@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater,null,false)
         setContentView(binding.root)
 
-        binding.mapView.setCalloutBalloonAdapter(CustomBalloonAdapter(layoutInflater,this@MainActivity))
+        binding.mapView.setCalloutBalloonAdapter(CustomBalloonAdapter(layoutInflater))
         binding.mapView.setPOIItemEventListener(eventListener)
 
         goToNowLocation()
@@ -74,15 +74,15 @@ class MainActivity : AppCompatActivity() {
                             }
                             val uLatitude : Double = (jsonArray.get(i) as JSONObject).get("latitude").toString().toDouble()
                             val uLongitude : Double = (jsonArray.get(i) as JSONObject).get("longitude").toString().toDouble()
-                            val fishingLocation: MapPoint = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
+                            val fishingSpot : MapPoint = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
 
                             val marker: MapPOIItem = MapPOIItem()
                             marker.apply {
                                 itemName = (jsonArray.get(i) as JSONObject).get("spot_name").toString()
                                 tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
                                 userObject = (jsonArray.get(i) as JSONObject).get("address").toString()
-                                mapPoint = fishingLocation
-                                markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
+                                mapPoint = fishingSpot
+                                markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커11 모양.
                                 selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
                                 isDraggable = true
                             }
