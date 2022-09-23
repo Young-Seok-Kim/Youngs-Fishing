@@ -7,13 +7,6 @@ import android.content.DialogInterface
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.google.gson.JsonObject
-import com.youngs.common.network.NetworkConnect
-import com.youngs.common.network.NetworkProgressDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import net.daum.mf.map.api.MapPOIItem
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat

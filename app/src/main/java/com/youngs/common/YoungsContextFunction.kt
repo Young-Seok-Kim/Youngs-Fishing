@@ -1,33 +1,25 @@
 package com.youngs.common
 
 import android.content.Context
-import android.widget.EditText
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import com.google.gson.JsonObject
-import com.youngs.common.kakao.CustomBalloonAdapter
-import com.youngs.common.kakao.FindGeoToAddressListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
-import com.youngs.youngsfishing.MainActivity
-import com.youngs.youngsfishing.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapReverseGeoCoder
-import net.daum.mf.map.api.MapView
-import org.json.JSONArray
-import org.w3c.dom.Text
 
 object YoungsContextFunction {
 
-    fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) {
+    fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) : MapPOIItem?{
+        var mPoiItem : MapPOIItem? = null
         val jsonObject: JsonObject = JsonObject()
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
         jsonObject.addProperty("address", if (poiItem?.userObject.toString().isBlank()) "" else poiItem.userObject.toString())
+        jsonObject.addProperty("like", "0")
+        jsonObject.addProperty("bad", "1")
         NetworkProgressDialog.start(context)
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("insertFishingSpot.do",
@@ -41,6 +33,7 @@ object YoungsContextFunction {
 
                     poiItem.itemName = spotName
                     poiItem.tag = insertSpotNo
+                    mPoiItem = poiItem
 
                     NetworkProgressDialog.end()
                 }, onFailure = {
@@ -48,6 +41,7 @@ object YoungsContextFunction {
                 }
             )
         }
+        return mPoiItem
     }
 
     fun updateFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) {
@@ -57,6 +51,8 @@ object YoungsContextFunction {
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
         jsonObject.addProperty("address", poiItem.userObject.toString())
+        jsonObject.addProperty("like", "0")
+        jsonObject.addProperty("bad", "1")
         NetworkProgressDialog.start(context)
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("updateFishingSpot.do",

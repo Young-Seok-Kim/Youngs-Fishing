@@ -42,10 +42,11 @@ class CustomBalloonAdapter(inflater: LayoutInflater): CalloutBalloonAdapter
 //        })
 //    }
 
-    override fun getCalloutBalloon(poiItem: MapPOIItem?): View {
+    override fun getCalloutBalloon(poiItem: MapPOIItem): View {
         // 마커 클릭 시 나오는 말풍선
-        name.text = poiItem?.itemName   // 해당 마커의 정보 이용 가능
-        address.text = poiItem?.userObject.toString().let { it.ifBlank { "" } }
+//        name.text = poiItem.itemName   // 해당 마커의 정보 이용 가능
+//        address.text = poiItem.userObject.toString().let { it.ifBlank { "" } }
+
 
 //        onChangeMarkerListener.updateMarker(poiItem)
         return mCalloutBalloon

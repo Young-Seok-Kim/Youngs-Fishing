@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -32,26 +33,21 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding : ActivityMainBinding
-    private val eventListener = MarkerEventListener(this@MainActivity,this)
+    private val eventListener = MarkerEventListener(this@MainActivity,this, supportFragmentManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater,null,false)
         setContentView(binding.root)
 
-        binding.mapView.setCalloutBalloonAdapter(CustomBalloonAdapter(layoutInflater))
+//        binding.mapView.setCalloutBalloonAdapter(CustomBalloonAdapter(layoutInflater))
         binding.mapView.setPOIItemEventListener(eventListener)
 
         goToNowLocation()
 
-//        setPin()
-
         initButton()
 
         selectFishingSpot()
-
-
-
     }
 
     private fun selectFishingSpot() {
@@ -78,9 +74,10 @@ class MainActivity : AppCompatActivity() {
 
                             val marker: MapPOIItem = MapPOIItem()
                             marker.apply {
-                                itemName = (jsonArray.get(i) as JSONObject).get("spot_name").toString()
+                                isShowCalloutBalloonOnTouch = false
+                                itemName = (jsonArray.get(i) as JSONObject?)?.get("spot_name")?.toString()
                                 tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
-                                userObject = (jsonArray.get(i) as JSONObject).get("address").toString()
+                                userObject = (jsonArray.get(i) as JSONObject?)?.get("address")?.toString()
                                 mapPoint = fishingSpot
                                 markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커11 모양.
                                 selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
@@ -129,6 +126,7 @@ class MainActivity : AppCompatActivity() {
 
             val marker: MapPOIItem = MapPOIItem()
             marker.apply {
+                isShowCalloutBalloonOnTouch = false
                 itemName = "신규 마커"
                 tag = 0
                 mapPoint = myLocation
@@ -157,11 +155,7 @@ class MainActivity : AppCompatActivity() {
 
             }catch(e: NullPointerException){
                 Log.e("LOCATION_ERROR", e.toString())
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ActivityCompat.finishAffinity(this)
-                }else{
-                    ActivityCompat.finishAffinity(this)
-                }
+                ActivityCompat.finishAffinity(this)
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -169,7 +163,7 @@ class MainActivity : AppCompatActivity() {
             }
         }else{
             Toast.makeText(this, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE )
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
         }
     }
 }

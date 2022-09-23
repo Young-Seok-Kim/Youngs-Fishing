@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme">
+        <!-- Customize your theme here. -->
+        <!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--        <item name="colorAccent">@color/colorAccent</item>-->
+        <!--        <item name="actionMenuTextColor">@android:color/white</item>-->
+        <!-- CHECK  edittext 밑줄-->
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+<!--        &lt;!&ndash; 타이틀바  밑 기본 버튼 &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/colorMain</item>-->
+<!--        &lt;!&ndash; 최상단 시계및 각종 정보 색깔 &ndash;&gt;-->
+<!--        <item name="colorPrimaryDark">@color/colorTitleBackgroud</item>-->
+    </style>
+
+    <style name="FullDialogTheme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">#ffffff</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!--splash 화면에 사용될 테마-->
+<!--    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">-->
+<!--        <item name="android:windowBackground">@drawable/youngs_book_splash</item>-->
+<!--    </style>-->
+
+    <style name="ImageText_WidthMatchParent" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/customlayout_textview</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="TextView_WidthWrapContent_Border" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:background">@drawable/customlayout_textview</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="TextView_WidthWrapContent_Borderless" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="Setting_LinearLayout" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="TextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:textSize">25dp</item>
+    </style>
+
+    <style name="LinearLayout_RightEditText" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="LinearLayout_RightTextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/s_core_dream4</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+</resources>
