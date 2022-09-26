@@ -42,7 +42,7 @@ object NetworkConnect {
 
         val okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30,TimeUnit.SECONDS).writeTimeout(30,TimeUnit.SECONDS).build()
 
-        val retrofit =Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
+        val retrofit = Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 //            if (BuildConfig.DEBUG)
 //        { // connectURL 에 접근하기 위한 변수
 //            Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
@@ -76,5 +76,38 @@ object NetworkConnect {
                 Log.d("인터넷 연결", t?.message.toString())
             }
         })
+    }
+
+    fun connectHTTPSSync(path : String, param : JsonObject
+    ){
+        /*
+            디버그 모드일때는 localhost 에 연결하고 (http),
+            릴리즈 모드일때는 AWS 에 연결되도록 [awsyoungsbook.duckdns.org]에 연결하도록 한다.
+            해당 코드를 수정하고 싶다면 SelfSigningHelper.kt 코드에있는 동일한 부분또한 수정해야한다.
+         */
+
+        connectURL =
+//            if (BuildConfig.DEBUG)
+            Define.BASE_URL_HTTP_DEBUG
+//        else
+//            Define.BASE_URL_HTTPS_RELEASE
+
+        val okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30,TimeUnit.SECONDS).writeTimeout(30,TimeUnit.SECONDS).build()
+
+        val retrofit =Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
+//            if (BuildConfig.DEBUG)
+//        { // connectURL 에 접근하기 위한 변수
+//            Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
+//        }
+//        else{
+//            val selfSign = SelfSigningHelper(context).setSSLOkHttp(okHttpClient.newBuilder()).build()
+//            Retrofit.Builder().baseUrl(connectURL).client(selfSign).addConverterFactory(GsonConverterFactory.create()).build()
+//        }
+
+
+        val retrofitService : RetrofitService = retrofit.create(RetrofitService::class.java) // RetrofitService 에 만든 서비스를 사용하기 위한 변수
+
+        Log.d("test","과연몇번")
+        resultString = retrofitService.connectRequest(path, param).execute().body()?.returnValue.toString()
     }
 }

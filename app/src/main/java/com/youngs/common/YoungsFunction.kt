@@ -7,6 +7,9 @@ import android.content.DialogInterface
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.youngs.common.kakao.FindGeoToAddressListener
+import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -174,6 +177,5 @@ object YoungsFunction {
             true
         ).show()
     }
-
 
 }

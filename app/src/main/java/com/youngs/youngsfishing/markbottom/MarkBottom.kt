@@ -1,16 +1,12 @@
 package com.youngs.youngsfishing.markbottom
 
-import android.Manifest
 import android.app.Dialog
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -18,32 +14,29 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.youngs.common.Define
 import com.youngs.common.YoungsFunction
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.common.recyclerview.RecyclerViewAdapter
-import com.youngs.youngsfishing.databinding.MarkBottomFragmentBinding
+import com.youngs.youngsfishing.databinding.FragmentMarkBottomBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
 import org.json.JSONArray
-import org.json.JSONObject
 
 class MarkBottom : BottomSheetDialogFragment() {
 
-    private lateinit var binding: MarkBottomFragmentBinding
+    private lateinit var binding:FragmentMarkBottomBinding
     private lateinit var dlg : BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = MarkBottomFragmentBinding.inflate(layoutInflater,null,false)
+        binding = FragmentMarkBottomBinding.inflate(layoutInflater,null,false)
 
         binding.spotNameTextView.text = arguments?.getString("spotName")
         binding.spotAddressTextView.text = arguments?.getString("spotAddress")
-
+        binding.spotNameTextView.isSelected = true
+        binding.spotNameTextView.setSingleLine() // 이름이 너무 길면 흐르도록 조정
 
         initList()
         updateList()
@@ -86,7 +79,6 @@ class MarkBottom : BottomSheetDialogFragment() {
 
             val recyclerView = binding.listview
 
-            val mLayoutManager: LinearLayoutManager
 
             MarkBottomAdapter.instance.setOnItemTapListener(object : RecyclerViewAdapter.OnItemTapListener{
                 override fun onDoubleTap(position: Int) {
@@ -123,7 +115,7 @@ class MarkBottom : BottomSheetDialogFragment() {
                     //즉 스크롤이 바닥에 닿아 멈춘 상태에 처리를 하겠다는
                 }
             })
-            MarkBottomAdapter.instance.listView = recyclerView
+        MarkBottomAdapter.instance.listView = recyclerView
 
     }
 

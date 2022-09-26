@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/fish_CheckBox"
+                    android:background="@drawable/customlayout_appear_fish"
+                    android:fontFamily="@font/s_core_dream4"
+                    android:padding="5dp"
+                    android:layout_margin="5dp"
+                    tools:text="고등어"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/fishSpecies_TextView"
+                    android:layout_marginStart="10dp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/customlayout_appear_fish"
+                    android:textColor="@color/little_light_black"
+                    android:fontFamily="@font/s_core_dream4"
+                    android:layout_marginEnd="10dp"
+                    android:padding="5dp"
+                    android:textSize="20dp"
+                    android:visibility="gone"
+                    tools:text="고등어"/>
+
+        </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

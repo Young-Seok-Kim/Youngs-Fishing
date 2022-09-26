@@ -35,9 +35,10 @@ import org.json.JSONObject
 
 import android.net.Uri
 import com.youngs.common.Define
+import com.youngs.youngsfishing.newspot.SendEventListener
 import net.daum.mf.map.api.MapView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SendEventListener {
     lateinit var binding : ActivityMainBinding
     private val eventListener = MarkerEventListener(this@MainActivity,this, supportFragmentManager)
 
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     val jsonArray : JSONArray = YoungsFunction.stringArrayToJson(NetworkConnect.resultString)
 
                     if(permissionCheck == PackageManager.PERMISSION_GRANTED) { // 권한 확인
-                        for (i in 0 until (jsonArray.length() ?:0) ) {
+                        for (i in 0 until (jsonArray.length()) ) {
                             if (jsonArray.get(i).toString().isBlank()) {
                                 continue
                             }
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                                 mapPoint = fishingSpot
                                 markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커11 모양.
                                 selectedMarkerType = MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-                                isDraggable = true
+                                isDraggable = false
                             }
                             binding.mapView.addPOIItem(marker)
                         }
@@ -159,6 +160,7 @@ class MainActivity : AppCompatActivity() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
             val lm: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
             try {
                 val userNowLocation: Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
                 val uLatitude = userNowLocation.latitude
@@ -171,8 +173,8 @@ class MainActivity : AppCompatActivity() {
                 Log.e("LOCATION_ERROR", e.toString())
                 ActivityCompat.finishAffinity(this)
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
                 System.exit(0)
             }
         }else{
@@ -190,10 +192,10 @@ class MainActivity : AppCompatActivity() {
                 // 권한 거절 (다시 한 번 물어봄)
                 val builder = AlertDialog.Builder(this)
                 builder.setMessage("현재 위치를 확인하시려면 위치 권한을 허용해주세요.")
-                builder.setPositiveButton("확인") { dialog, which ->
+                builder.setPositiveButton("확인") { _, _ ->
                     ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
                 }
-                builder.setNegativeButton("취소") { dialog, which ->
+                builder.setNegativeButton("취소") { _, _ ->
 
                 }
                 builder.show()
@@ -206,11 +208,11 @@ class MainActivity : AppCompatActivity() {
                     // 다시 묻지 않음 클릭 (앱 정보 화면으로 이동)
                     val builder = AlertDialog.Builder(this)
                     builder.setMessage("현재 위치를 확인하시려면 설정에서 위치 권한을 허용해주세요.")
-                    builder.setPositiveButton("설정으로 이동") { dialog, which ->
+                    builder.setPositiveButton("설정으로 이동") { _, _ ->
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
                         startActivity(intent)
                     }
-                    builder.setNegativeButton("취소") { dialog, which ->
+                    builder.setNegativeButton("취소") { _, _ ->
 
                     }
                     builder.show()
@@ -235,5 +237,13 @@ class MainActivity : AppCompatActivity() {
     // 위치추적 중지
     private fun stopTracking() {
         binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
+    }
+
+    override fun sendFishList(s: ArrayList<String>) {
+        Toast.makeText(this, "message : $s",Toast.LENGTH_LONG).show()
+    }
+
+    override fun sendPoiItemInfo(poiItem: MapPOIItem) {
+        
     }
 }

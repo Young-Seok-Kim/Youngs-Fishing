@@ -3,6 +3,9 @@ package com.youngs.common.kakao
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
@@ -11,6 +14,7 @@ import com.youngs.common.YoungsContextFunction.deleteFishingSpot
 import com.youngs.common.YoungsContextFunction.insertFishingSpot
 import com.youngs.common.YoungsContextFunction.updateFishingSpot
 import com.youngs.youngsfishing.markbottom.MarkBottom
+import com.youngs.youngsfishing.newspot.NewSpot
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
@@ -23,11 +27,9 @@ class MarkerEventListener(
 ) : MapView.POIItemEventListener {
     override fun onPOIItemSelected(mapView: MapView, poiItem: MapPOIItem) {
         // 마커 클릭 시
-
-
         findAddress(poiItem)
 
-        if (poiItem.tag <= 0){
+        if (poiItem.tag <= 0){ // tag가 0 이하면 신규 마커이다.
             dialogEdit(mapView,poiItem)
         }
         else{
@@ -47,11 +49,7 @@ class MarkerEventListener(
         buttonType: MapPOIItem.CalloutBalloonButtonType?
     ) {
         // 말풍선 클릭 시
-
         findAddress(poiItem)
-
-
-
     }
 
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
@@ -59,22 +57,14 @@ class MarkerEventListener(
         p1?.mapPoint = p2 // 드래그하고 저장을 했을때 마커를 이동하기 전 위치가 나와서 위치를 바꿔줌
     }
 
-    private fun findAddress(poiItem: MapPOIItem) {
-        val reverseGeoCoder: MapReverseGeoCoder = MapReverseGeoCoder(
-            Define.KAKAO_NATIVE_KEY,
-            poiItem.mapPoint,
-            FindGeoToAddressListener(poiItem),
-            contextActivity
-        )
-        reverseGeoCoder.startFindingAddress() // 위도, 경도로 주소찾기, poiItem의 userObject에 주소가 저장된다.
-    }
+
 
     private fun dialogEdit(mapView: MapView, poiItem: MapPOIItem){
         findAddress(poiItem)
 
         val builder = AlertDialog.Builder(context)
-        val txtEditText: EditText = EditText(context)
-        val itemList = arrayOf("저장", "마커 삭제", "취소")
+        val txtEditText : EditText = EditText(context)
+        val itemList = arrayOf("저장", "마커 삭제", "취소","포획가능 어종 선택")
 
         txtEditText.hint = "스팟명 변경"
 
@@ -117,6 +107,8 @@ class MarkerEventListener(
                     mapView.removePOIItem(poiItem)    // 마커 삭제
                 }
                 2 -> dialog.dismiss()   // 대화상자 닫기
+
+                3 -> NewSpot(poiItem,contextActivity).showNow(fragmentManagerParam, "")
             }
         }
         builder.show()
@@ -133,5 +125,15 @@ class MarkerEventListener(
             it.arguments = bundle
             it.showNow(fragmentManagerParam, "")
         }
+    }
+
+    fun findAddress(poiItem: MapPOIItem) {
+        val reverseGeoCoder: MapReverseGeoCoder = MapReverseGeoCoder(
+            Define.KAKAO_NATIVE_KEY,
+            poiItem.mapPoint,
+            FindGeoToAddressListener(poiItem), // 위도, 경도로 주소찾기, poiItem의 userObject에 주소가 저장된다.
+            contextActivity
+        )
+        reverseGeoCoder.startFindingAddress()
     }
 }
