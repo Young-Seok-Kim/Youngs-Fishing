@@ -70,7 +70,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                 if (NewSpotAdapter.instance._arrayList[i].isChecked) {
                     selectFishList.add(NewSpotAdapter.instance._arrayList[i].fish_name)
                     insertPOI?.let { it ->
-                        insertAppearFish(this@NewSpot.requireContext(), it, onSuccess = { -> }, NewSpotAdapter.instance._arrayList[i].fish_name)
+                        insertAppearFish(this@NewSpot.requireContext(), it, onSuccess = { -> }, NewSpotAdapter.instance._arrayList[i])
                     }
                 }
             }
@@ -197,7 +197,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         return mPoiItem
     }
 
-    private fun insertAppearFish(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, fishName : String?) : MapPOIItem?{
+    private fun insertAppearFish(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, fish : NewSpotModel) : MapPOIItem?{
         MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,
@@ -206,7 +206,8 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         )
         val mPoiItem : MapPOIItem? = null
         val jsonObject: JsonObject = JsonObject()
-        jsonObject.addProperty("fish_name", fishName)
+        jsonObject.addProperty("fish_no", fish.fish_no)
+        jsonObject.addProperty("fish_name", fish.fish_name)
         jsonObject.addProperty("spot_no", poiItem.tag)
         NetworkProgressDialog.start(context)
 

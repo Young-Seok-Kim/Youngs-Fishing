@@ -109,10 +109,10 @@ object NetworkConnect {
         val retrofitService : RetrofitService = retrofit.create(RetrofitService::class.java) // RetrofitService 에 만든 서비스를 사용하기 위한 변수
 
         Log.d("test","과연몇번")
-        val test = retrofitService.connectRequest(path, param).execute()
+        val executeServer = retrofitService.connectRequest(path, param).execute()
 
-        if (test.isSuccessful)
-            resultString = test.body()?.returnValue.toString()
+        if (executeServer.isSuccessful)
+            resultString = executeServer.body()?.returnValue.toString()
         else
             Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
 
