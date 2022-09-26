@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,6 +58,11 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         updateList()
 
         binding.save.setOnClickListener(View.OnClickListener {
+            if (binding.spotNameEditText.text.toString().isBlank()) {
+                Toast.makeText(context,"스팟명을 입력해주세요",Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            }
+
             val selectFishList: ArrayList<String> = arrayListOf()
             val insertPOI = insertFishingSpot(this@NewSpot.requireContext(), poiItem, onSuccess = { -> }, binding.spotNameEditText.text.toString())
             Log.d("test","저장버튼 클릭")
@@ -68,7 +74,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                     }
                 }
             }
-
+            dismiss()
         })
     }
 
@@ -172,13 +178,14 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
-        jsonObject.addProperty("address", poiItem.userObject?.toString()?:"주소 없음")
+        jsonObject.addProperty("address", if (poiItem.userObject?.toString().isNullOrBlank()) "주소없음" else poiItem.userObject.toString())
         jsonObject.addProperty("like", "0")
         jsonObject.addProperty("bad", "0")
+
         NetworkProgressDialog.start(context)
         runBlocking {
             CoroutineScope(Dispatchers.IO).launch {
-                val test = NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject)
+                val test = NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject,context)
                 Log.d("test", "스팟추가 코루틴")
                 val insertSpotNo: Int = YoungsFunction.stringIntToJson(NetworkConnect.resultString)
                 poiItem.itemName = spotName
@@ -205,7 +212,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
 
         runBlocking {
             CoroutineScope(Dispatchers.IO).launch {
-                NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject)
+                NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject,context)
                 NetworkProgressDialog.end()
             }.join()
         }

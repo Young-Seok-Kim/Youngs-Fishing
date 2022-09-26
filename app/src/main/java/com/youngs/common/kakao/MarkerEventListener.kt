@@ -64,17 +64,28 @@ class MarkerEventListener(
 
         val builder = AlertDialog.Builder(context)
         val txtEditText : EditText = EditText(context)
-        val itemList = arrayOf("저장", "마커 삭제", "취소","포획가능 어종 선택")
+        val itemList = arrayOf("포획가능 어종 선택", "마커 삭제", "취소"/*,"포획가능 어종 선택"*/)
 
         txtEditText.hint = "스팟명 변경"
 
         builder.setCancelable(false)
         builder.setTitle(poiItem.itemName)
-        builder.setView(txtEditText)
+//        builder.setView(txtEditText)
         builder.setItems(itemList) { dialog, which ->
             when (which) {
-                0 -> {
+                0 -> NewSpot(poiItem,contextActivity).showNow(fragmentManagerParam, "")
 
+                1 -> {
+                    deleteFishingSpot(context, poiItem, onSuccess = { ->
+                        if (poiItem.markerType.name == "YellowPin") {
+                            poiItem.markerType = MapPOIItem.MarkerType.BluePin
+                        }
+                    })
+
+                    mapView.removePOIItem(poiItem)    // 마커 삭제
+                }
+                2 -> dialog.dismiss()   // 대화상자 닫기
+                3 -> {
                     if (poiItem.tag <= 0) {
                         val insertPOI = insertFishingSpot(context, poiItem, onSuccess = { ->
 
@@ -97,18 +108,6 @@ class MarkerEventListener(
                         }, txtEditText.text.toString())
                     }
                 }
-                1 -> {
-                    deleteFishingSpot(context, poiItem, onSuccess = { ->
-                        if (poiItem.markerType.name == "YellowPin") {
-                            poiItem.markerType = MapPOIItem.MarkerType.BluePin
-                        }
-                    })
-
-                    mapView.removePOIItem(poiItem)    // 마커 삭제
-                }
-                2 -> dialog.dismiss()   // 대화상자 닫기
-
-                3 -> NewSpot(poiItem,contextActivity).showNow(fragmentManagerParam, "")
             }
         }
         builder.show()
