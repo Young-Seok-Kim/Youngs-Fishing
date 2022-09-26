@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
                             val marker: MapPOIItem = MapPOIItem()
                             marker.apply {
-                                isShowCalloutBalloonOnTouch = false
+                                isShowCalloutBalloonOnTouch = false // 해당값을 false로 놓으면 마커 클릭시 말풍선이 나오지않는다.
                                 itemName = (jsonArray.get(i) as JSONObject?)?.get("spot_name")?.toString()
                                 tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
                                 userObject = (jsonArray.get(i) as JSONObject?)?.get("address")?.toString()
