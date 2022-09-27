@@ -44,7 +44,7 @@ object NetworkConnect {
 //        else
 //            Define.BASE_URL_HTTPS_RELEASE
 
-        val okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30,TimeUnit.SECONDS).writeTimeout(30,TimeUnit.SECONDS).build()
+        val okHttpClient = OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10,TimeUnit.SECONDS).writeTimeout(10,TimeUnit.SECONDS).build()
 
         val retrofit = Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 //            if (BuildConfig.DEBUG)
@@ -85,7 +85,7 @@ object NetworkConnect {
 
     fun connectHTTPSSync(path : String, param : JsonObject
                          , context : Context // 실패했을때 토스트메시지를 띄워주기 위한 컨텍스트
-    ){
+    ){ // 동기방식을 사용하여 네트워크에 연결하는 함수
         /*
             디버그 모드일때는 localhost 에 연결하고 (http),
             릴리즈 모드일때는 AWS 에 연결되도록 [awsyoungsbook.duckdns.org]에 연결하도록 한다.
@@ -113,7 +113,6 @@ object NetworkConnect {
 
         val retrofitService : RetrofitService = retrofit.create(RetrofitService::class.java) // RetrofitService 에 만든 서비스를 사용하기 위한 변수
 
-        Log.d("test","과연몇번")
         try {
             val executeServer = retrofitService.connectRequest(path, param).execute()
 
