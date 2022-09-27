@@ -12,6 +12,7 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.NumberFormatException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,9 +31,15 @@ object YoungsFunction {
     }
 
     fun stringIntToJson(jsonString: String): Int {
-        val jsonObject = JSONObject(jsonString)
+        try {
+            val jsonObject = JSONObject(jsonString)
 
-        return jsonObject.get("RESULT_LIST").toString().toInt()
+            return jsonObject.get("RESULT_LIST").toString().toInt()
+        }
+        catch (e : NumberFormatException){
+            Log.d("에러","숫자 형변환 에러")
+            return -1
+        }
     }
 
     /**
