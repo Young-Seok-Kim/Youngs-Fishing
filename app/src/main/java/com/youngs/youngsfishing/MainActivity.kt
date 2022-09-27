@@ -56,13 +56,13 @@ class MainActivity : AppCompatActivity(), SendEventListener {
 
         selectFishingSpot()
 
-        if (checkLocationService()) {
-            // GPS가 켜져있을 경우
-            permissionCheck()
-        } else {
-            // GPS가 꺼져있을 경우
-            Toast.makeText(this, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
-        }
+//        if (checkLocationService()) {
+//            // GPS가 켜져있을 경우
+//            permissionCheck()
+//        } else {
+//            // GPS가 꺼져있을 경우
+//            Toast.makeText(this, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private fun selectFishingSpot() {
@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity(), SendEventListener {
         }
 
         binding.addPin.setOnClickListener(){
+            goToNowLocation()
             setPin()
         }
     }

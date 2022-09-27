@@ -6,12 +6,16 @@ import android.widget.Toast
 import com.google.gson.JsonObject
 import com.youngs.common.Define
 import com.youngs.youngsfishing.BuildConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
 object NetworkConnect {
@@ -54,6 +58,7 @@ object NetworkConnect {
 
 
         val retrofitService : RetrofitService = retrofit.create(RetrofitService::class.java) // RetrofitService 에 만든 서비스를 사용하기 위한 변수
+        Log.d("path",path)
 
         retrofitService.connectRequest(path, param).enqueue(object : Callback<ResponseDTO>{
             override fun onResponse(call: Call<ResponseDTO>?, response: Response<ResponseDTO>?) {
@@ -93,7 +98,7 @@ object NetworkConnect {
 //        else
 //            Define.BASE_URL_HTTPS_RELEASE
 
-        val okHttpClient = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30,TimeUnit.SECONDS).writeTimeout(30,TimeUnit.SECONDS).build()
+        val okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS).readTimeout(5,TimeUnit.SECONDS).writeTimeout(5,TimeUnit.SECONDS).build()
 
         val retrofit =Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 //            if (BuildConfig.DEBUG)
@@ -109,12 +114,23 @@ object NetworkConnect {
         val retrofitService : RetrofitService = retrofit.create(RetrofitService::class.java) // RetrofitService 에 만든 서비스를 사용하기 위한 변수
 
         Log.d("test","과연몇번")
-        val executeServer = retrofitService.connectRequest(path, param).execute()
+        try {
+            val executeServer = retrofitService.connectRequest(path, param).execute()
 
-        if (executeServer.isSuccessful)
-            resultString = executeServer.body()?.returnValue.toString()
-        else
-            Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
+            if (executeServer.isSuccessful)
+                resultString = executeServer.body()?.returnValue.toString()
+            else{
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }catch (e : SocketTimeoutException){
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     }
 }

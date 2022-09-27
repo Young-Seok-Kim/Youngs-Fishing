@@ -11,6 +11,7 @@ import com.youngs.common.kakao.FindGeoToAddressListener
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.lang.NumberFormatException
 import java.text.SimpleDateFormat
@@ -38,7 +39,11 @@ object YoungsFunction {
         }
         catch (e : NumberFormatException){
             Log.d("에러","숫자 형변환 에러")
-            return -1
+            return 0
+        }
+        catch (e : JSONException){
+            Log.d("에러","JsonException 에러")
+            return 0
         }
     }
 
