@@ -123,13 +123,10 @@ object NetworkConnect {
                     Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }catch (e : SocketTimeoutException){
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(context, "서버와 연결을 시도했으나 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-
-
     }
 }

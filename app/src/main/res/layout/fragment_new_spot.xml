@@ -27,6 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_gravity="center"
                     android:fontFamily="@font/s_core_dream7"
                     android:textSize="15dp"
                     android:text="포획가능어종 선택"/>

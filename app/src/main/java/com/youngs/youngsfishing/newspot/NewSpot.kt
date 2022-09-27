@@ -65,31 +65,28 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                 activity
             )
 
-            val progress = NetworkProgress()
-            startProgress()
-
             val selectFishList: ArrayList<String> = arrayListOf()
-            val insertPOI = insertFishingSpot(this@NewSpot.requireContext(), poiItem, onSuccess = { -> }, binding.spotNameEditText.text.toString())
-            Log.d("test","저장버튼 클릭")
 
-            for (i in 0 until (NewSpotAdapter.instance.itemCount)) {
-                if (NewSpotAdapter.instance._arrayList[i].isChecked) {
-                    selectFishList.add(NewSpotAdapter.instance._arrayList[i].fish_name)
-                    insertPOI?.let { it ->
-                        insertAppearFish(this@NewSpot.requireContext(), it, onSuccess = { -> }, NewSpotAdapter.instance._arrayList[i])
+            runBlocking {
+                val insertPOI = insertFishingSpot(this@NewSpot.requireContext(), poiItem, onSuccess = { -> }, binding.spotNameEditText.text.toString())
+                Log.d("test","저장버튼 클릭")
+
+                for (i in 0 until (NewSpotAdapter.instance.itemCount)) {
+                    if (NewSpotAdapter.instance._arrayList[i].isChecked) {
+                        selectFishList.add(NewSpotAdapter.instance._arrayList[i].fish_name)
+                        insertPOI?.let { it ->
+                            insertAppearFish(this@NewSpot.requireContext(), it, onSuccess = { -> }, NewSpotAdapter.instance._arrayList[i])
+                        }
                     }
                 }
             }
-
-
-
+            dismiss()
         })
     }
 
 
     private fun updateList() {
         val jsonObject: JsonObject = JsonObject()
-//        jsonObject.addProperty("spot_no", arguments?.getString("spotNo"))
         startProgress()
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("selectFishList.do",
@@ -113,6 +110,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                     endProgress()
                 }, onFailure = {
                     endProgress()
+                    dismiss()
                 }
             )
         }
@@ -161,12 +159,12 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         return binding.root
     }
 
-    private fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) : MapPOIItem?{
+    private suspend fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) : MapPOIItem?{
         var mPoiItem : MapPOIItem?  = null
+        startProgress()
 
         val jsonObject: JsonObject = JsonObject()
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
@@ -176,67 +174,59 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         jsonObject.addProperty("like", "0")
         jsonObject.addProperty("bad", "0")
 
-        runBlocking {
-            CoroutineScope(Dispatchers.Main).launch {
                 CoroutineScope(Dispatchers.IO).launch {
                     val test = NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject,context)
-                    Log.d("test", "스팟추가 코루틴")
                     val insertSpotNo: Int = YoungsFunction.stringIntToJson(NetworkConnect.resultString)
                     poiItem.itemName = spotName
                     poiItem.tag = insertSpotNo
                     mPoiItem = poiItem
                 }.join()
 
-                endProgress()
-            }
-        }
+        endProgress()
         return mPoiItem
     }
 
-    private fun insertAppearFish(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, fish : NewSpotModel) : MapPOIItem?{
+    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, fish : NewSpotModel) : MapPOIItem?{
         MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,
             FindGeoToAddressListener(poiItem), // 위도, 경도로 주소찾기, poiItem의 userObject에 주소가 저장된다.
             activity
         )
+        startProgress()
         val mPoiItem : MapPOIItem? = null
         val jsonObject: JsonObject = JsonObject()
         jsonObject.addProperty("fish_no", fish.fish_no)
         jsonObject.addProperty("fish_name", fish.fish_name)
         jsonObject.addProperty("spot_no", poiItem.tag)
 
-        runBlocking {
-            CoroutineScope(Dispatchers.Main).launch {
-
                 CoroutineScope(Dispatchers.IO).launch {
                     NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject, context)
                 }.join()
 
-
-            }
-        }
+        endProgress()
         return mPoiItem
     }
 
     private fun startProgress()
     {
         val progress = NetworkProgress()
-        getActivity()?.window?.let {
+        dialog?.window?.let {
             progress.startProgress(binding.progressbar,it)
             binding.spotNameEditText.visibility = View.GONE
             binding.saveButton.visibility = View.GONE
+            binding.listview.visibility = View.GONE
         }
     }
     private fun endProgress()
     {
         val progress = NetworkProgress()
-        
-        getActivity()?.window?.let {
+
+        dialog?.window?.let {
             progress.endProgressBar(binding.progressbar,it)
             binding.spotNameEditText.visibility = View.VISIBLE
             binding.saveButton.visibility = View.VISIBLE
-            dismiss()
+            binding.listview.visibility = View.VISIBLE
         }
     }
 }
