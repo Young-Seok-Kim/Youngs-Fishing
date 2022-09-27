@@ -77,7 +77,7 @@ class MarkerEventListener(
             when (which) {
                 0 -> NewSpot(poiItem,contextActivity).let {
                     it.showNow(fragmentManagerParam, "")
-                    it.isCancelable = false
+                    it.isCancelable = true
                 }
 
                 1 -> {
