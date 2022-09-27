@@ -18,7 +18,6 @@ import com.youngs.common.YoungsFunction
 import com.youngs.common.kakao.FindGeoToAddressListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgress
-import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.FragmentNewSpotBinding
 import kotlinx.coroutines.CoroutineScope
@@ -50,15 +49,10 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         binding = FragmentNewSpotBinding.inflate(layoutInflater, null, false)
 
 
-//        binding.spotNameTextView.text = arguments?.getString("spotName")
-//        binding.spotAddressTextView.text = arguments?.getString("spotAddress")
-//        binding.spotNameTextView.isSelected = true
-//        binding.spotNameTextView.setSingleLine() // 이름이 너무 길면 흐르도록 조정
-
         initList()
         updateList()
 
-        binding.save.setOnClickListener(View.OnClickListener {
+        binding.saveButton.setOnClickListener(View.OnClickListener {
             if (binding.spotNameEditText.text.toString().isBlank()) {
                 Toast.makeText(context,"스팟명을 입력해주세요",Toast.LENGTH_SHORT).show()
                 return@OnClickListener
@@ -71,9 +65,8 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                 activity
             )
 
-            val test = NetworkProgress()
-//            NetworkProgressDialog.start(this@NewSpot.requireContext())
-//            test.startProgress(binding.progressbar,this@NewSpot.requireContext())
+            val progress = NetworkProgress()
+            startProgress()
 
             val selectFishList: ArrayList<String> = arrayListOf()
             val insertPOI = insertFishingSpot(this@NewSpot.requireContext(), poiItem, onSuccess = { -> }, binding.spotNameEditText.text.toString())
@@ -88,9 +81,8 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                 }
             }
 
-//            NetworkProgressDialog.start(this@NewSpot.requireContext())
 
-            dismiss()
+
         })
     }
 
@@ -98,7 +90,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
     private fun updateList() {
         val jsonObject: JsonObject = JsonObject()
 //        jsonObject.addProperty("spot_no", arguments?.getString("spotNo"))
-        NetworkProgressDialog.start(requireContext())
+        startProgress()
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("selectFishList.do",
                 jsonObject,
@@ -118,10 +110,9 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                             NewSpotAdapter.instance.addItem(item)
                         }
                     }
-
-                    NetworkProgressDialog.end()
+                    endProgress()
                 }, onFailure = {
-                    NetworkProgressDialog.end()
+                    endProgress()
                 }
             )
         }
@@ -130,12 +121,9 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
     private fun initList() {
 
         val recyclerView = binding.listview
-
-
-        val mLayoutManager = GridLayoutManager(context, 2)
-
+        val mLayoutManager = GridLayoutManager(context, 2) // 그리드로 리사이클러뷰 표현
         recyclerView.layoutManager = mLayoutManager
-
+        
         NewSpotAdapter.instance.setOnItemTapListener(object :
             RecyclerViewAdapter.OnItemTapListener {
             override fun onDoubleTap(position: Int) {
@@ -151,18 +139,14 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         })
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             }
-
             override fun onScrollStateChanged(view: RecyclerView, scrollState: Int) {
                 //OnScrollListener.SCROLL_STATE_IDLE은 스크롤이 이동하다가 멈추었을때 발생되는 스크롤 상태입니다.
                 //즉 스크롤이 바닥에 닿아 멈춘 상태에 처리를 하겠다는
             }
         })
         NewSpotAdapter.instance.listView = recyclerView
-
     }
 
 
@@ -192,12 +176,8 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         jsonObject.addProperty("like", "0")
         jsonObject.addProperty("bad", "0")
 
-//        NetworkProgressDialog.start(context)
-
         runBlocking {
             CoroutineScope(Dispatchers.Main).launch {
-//                    val test = NetworkProgress()
-//                    test.startProgress(binding.progressbar,activity.window)
                 CoroutineScope(Dispatchers.IO).launch {
                     val test = NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject,context)
                     Log.d("test", "스팟추가 코루틴")
@@ -207,11 +187,8 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
                     mPoiItem = poiItem
                 }.join()
 
-//                NetworkProgressDialog.end()
+                endProgress()
             }
-
-
-//            test.endProgressBar(binding.progressbar,activity.window)
         }
         return mPoiItem
     }
@@ -228,24 +205,38 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         jsonObject.addProperty("fish_no", fish.fish_no)
         jsonObject.addProperty("fish_name", fish.fish_name)
         jsonObject.addProperty("spot_no", poiItem.tag)
-//        NetworkProgressDialog.start(context)
-//        val test = NetworkProgress()
-//        test.startProgress(binding.progressbar,activity.window)
+
         runBlocking {
             CoroutineScope(Dispatchers.Main).launch {
-//                val test = NetworkProgress()
-//                test.startProgress(binding.progressbar, activity.window)
 
                 CoroutineScope(Dispatchers.IO).launch {
                     NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject, context)
-//                NetworkProgressDialog.end()
                 }.join()
 
-//                NetworkProgressDialog.end()
-            }
-//            test.endProgressBar(binding.progressbar,activity.window)
-        }
 
+            }
+        }
         return mPoiItem
+    }
+
+    private fun startProgress()
+    {
+        val progress = NetworkProgress()
+        getActivity()?.window?.let {
+            progress.startProgress(binding.progressbar,it)
+            binding.spotNameEditText.visibility = View.GONE
+            binding.saveButton.visibility = View.GONE
+        }
+    }
+    private fun endProgress()
+    {
+        val progress = NetworkProgress()
+        
+        getActivity()?.window?.let {
+            progress.endProgressBar(binding.progressbar,it)
+            binding.spotNameEditText.visibility = View.VISIBLE
+            binding.saveButton.visibility = View.VISIBLE
+            dismiss()
+        }
     }
 }

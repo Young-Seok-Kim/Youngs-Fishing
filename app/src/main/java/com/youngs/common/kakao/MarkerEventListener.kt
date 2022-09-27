@@ -75,7 +75,10 @@ class MarkerEventListener(
 //        builder.setView(txtEditText)
         builder.setItems(itemList) { dialog, which ->
             when (which) {
-                0 -> NewSpot(poiItem,contextActivity).showNow(fragmentManagerParam, "")
+                0 -> NewSpot(poiItem,contextActivity).let {
+                    it.showNow(fragmentManagerParam, "")
+                    it.isCancelable = false
+                }
 
                 1 -> {
                     deleteFishingSpot(context, poiItem, onSuccess = { ->
