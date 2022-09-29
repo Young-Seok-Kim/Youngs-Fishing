@@ -1,13 +1,12 @@
 package com.youngs.youngsfishing.markbottom
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -22,30 +21,48 @@ import com.youngs.youngsfishing.databinding.FragmentMarkBottomBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.daum.mf.map.api.MapPOIItem
 import org.json.JSONArray
+import java.lang.ClassCastException
 
-class MarkBottom : BottomSheetDialogFragment() {
+class MarkBottom(val poiItem: MapPOIItem) : BottomSheetDialogFragment() {
 
     private lateinit var binding:FragmentMarkBottomBinding
     private lateinit var dlg : BottomSheetDialog
+    lateinit var markBottomCustomListener : MarkBottomCustomListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            markBottomCustomListener = context as MarkBottomCustomListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(context.toString() + "must be implement SendEventListener")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentMarkBottomBinding.inflate(layoutInflater,null,false)
 
-        binding.spotNameTextView.text = arguments?.getString("spotName")
-        binding.spotAddressTextView.text = arguments?.getString("spotAddress")
+        binding.spotNameTextView.text = poiItem.itemName
+        binding.spotAddressTextView.text = (poiItem.userObject?:"").toString()
         binding.spotNameTextView.isSelected = true
         binding.spotNameTextView.setSingleLine() // 이름이 너무 길면 흐르도록 조정
 
         initList()
         updateList()
 
+        binding.howToGoSpotImageButton.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                markBottomCustomListener.sendPoiItem(poiItem)
+            }
+        })
+
     }
 
     private fun updateList() {
         val jsonObject : JsonObject = JsonObject()
-        jsonObject.addProperty("spot_no", arguments?.getString("spotNo"))
+        jsonObject.addProperty("spot_no", poiItem.tag)
         NetworkProgressDialog.start(requireContext())
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("selectAppearFish.do",
@@ -145,13 +162,6 @@ class MarkBottom : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        initButton()
-
         return binding.root
-    }
-
-
-    private fun initButton() {
-
     }
 }

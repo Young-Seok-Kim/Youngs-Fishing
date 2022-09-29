@@ -32,16 +32,8 @@ import java.lang.ClassCastException
 class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment() {
 
     private lateinit var binding: FragmentNewSpotBinding
-    var sendEvenListener: SendEventListener? = null
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
-        try {
-            sendEvenListener = context as SendEventListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + "must be implement SendEventListener")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,14 +60,22 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
             val selectFishList: ArrayList<String> = arrayListOf()
 
             runBlocking {
-                val insertPOI = insertFishingSpot(this@NewSpot.requireContext(), poiItem, onSuccess = { -> }, binding.spotNameEditText.text.toString())
+                val insertPOI = insertFishingSpot(
+                    this@NewSpot.requireContext(),
+                    poiItem,
+                    binding.spotNameEditText.text.toString()
+                )
                 Log.d("test","저장버튼 클릭")
 
                 for (i in 0 until (NewSpotAdapter.instance.itemCount)) {
                     if (NewSpotAdapter.instance._arrayList[i].isChecked) {
                         selectFishList.add(NewSpotAdapter.instance._arrayList[i].fish_name)
                         insertPOI?.let { it ->
-                            insertAppearFish(this@NewSpot.requireContext(), it, onSuccess = { -> }, NewSpotAdapter.instance._arrayList[i])
+                            insertAppearFish(
+                                this@NewSpot.requireContext(),
+                                it,
+                                NewSpotAdapter.instance._arrayList[i]
+                            )
                         }
                     }
                 }
@@ -83,7 +83,6 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
             dismiss()
         })
     }
-
 
     private fun updateList() {
         val jsonObject: JsonObject = JsonObject()
@@ -162,7 +161,7 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         return binding.root
     }
 
-    private suspend fun insertFishingSpot(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, spotName : String?) : MapPOIItem?{
+    private suspend fun insertFishingSpot(context: Context, poiItem: MapPOIItem, spotName: String?) : MapPOIItem?{
         var mPoiItem : MapPOIItem?  = null
         startProgress()
 
@@ -170,23 +169,23 @@ class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment(
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
-        jsonObject.addProperty("address", if (poiItem.userObject?.toString().isNullOrBlank()) "주소없음" else poiItem.userObject.toString())
+        jsonObject.addProperty("address", if (poiItem.userObject?.toString().isNullOrBlank()) "" else poiItem.userObject.toString())
         jsonObject.addProperty("like", "0")
         jsonObject.addProperty("bad", "0")
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    val test = NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject,context)
-                    val insertSpotNo: Int = YoungsFunction.stringIntToJson(NetworkConnect.resultString)
-                    poiItem.itemName = spotName
-                    poiItem.tag = insertSpotNo
-                    mPoiItem = poiItem
-                }.join()
+        CoroutineScope(Dispatchers.IO).launch {
+            NetworkConnect.connectHTTPSSync("insertFishingSpot.do",jsonObject,context)
+            val insertSpotNo: Int = YoungsFunction.stringIntToJson(NetworkConnect.resultString)
+            poiItem.itemName = spotName
+            poiItem.tag = insertSpotNo
+            mPoiItem = poiItem
+        }.join()
 
         endProgress()
         return mPoiItem
     }
 
-    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, onSuccess : () -> Unit, fish : NewSpotModel) : MapPOIItem?{
+    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, fish: NewSpotModel) : MapPOIItem?{
         MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,

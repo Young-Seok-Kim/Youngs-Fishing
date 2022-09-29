@@ -90,7 +90,7 @@ class MarkerEventListener(
                     mapView.removePOIItem(poiItem)    // 마커 삭제
                 }
                 2 -> dialog.dismiss()   // 대화상자 닫기
-                3 -> {
+                3 -> { // 저장버튼 클릭, 현재는 안씀
                     if (poiItem.tag <= 0) {
                         val insertPOI = insertFishingSpot(context, poiItem, onSuccess = { ->
 
@@ -120,15 +120,7 @@ class MarkerEventListener(
     }
 
     private fun markBottomPopup(poiItem: MapPOIItem){
-        MarkBottom().let{
-            val bundle = Bundle()
-            bundle.putString("spotNo", poiItem.tag.toString())
-            bundle.putString("spotName", poiItem.itemName)
-            bundle.putString("spotAddress", (poiItem.userObject?:"").toString())
-
-            it.arguments = bundle
-            it.showNow(fragmentManagerParam, "")
-        }
+        MarkBottom(poiItem).showNow(fragmentManagerParam, "")
     }
 
     fun findAddress(poiItem: MapPOIItem) {

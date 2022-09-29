@@ -1,12 +1,13 @@
 package com.youngs.youngsfishing
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -20,27 +21,26 @@ import com.google.gson.JsonObject
 import com.youngs.common.Define.PERMISSIONS_REQUEST_CODE
 import com.youngs.common.Define.REQUIRED_PERMISSIONS
 import com.youngs.common.YoungsFunction
-import com.youngs.common.kakao.CustomBalloonAdapter
 import com.youngs.common.kakao.MarkerEventListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.youngsfishing.databinding.ActivityMainBinding
+import com.youngs.youngsfishing.markbottom.MarkBottomCustomListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapView
 import org.json.JSONArray
 import org.json.JSONObject
 
-import android.net.Uri
-import com.youngs.common.Define
-import com.youngs.youngsfishing.newspot.SendEventListener
-import net.daum.mf.map.api.MapView
 
-class MainActivity : AppCompatActivity(), SendEventListener {
+class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
     lateinit var binding : ActivityMainBinding
+
     private val eventListener = MarkerEventListener(this@MainActivity,this, supportFragmentManager)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), SendEventListener {
 //        binding.mapView.setCalloutBalloonAdapter(CustomBalloonAdapter(layoutInflater))
         binding.mapView.setPOIItemEventListener(eventListener)
 
-        goToNowLocation()
+        goToNowLocation(true)
 
         initButton()
 
@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), SendEventListener {
                 jsonObject,
                 this@MainActivity // 실패했을때 Toast 메시지를 띄워주기 위한 Context
                 , onSuccess = { ->
+
                     val permissionCheck = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION)
 
                     val jsonArray : JSONArray = YoungsFunction.stringArrayToJson(NetworkConnect.resultString)
@@ -118,13 +119,19 @@ class MainActivity : AppCompatActivity(), SendEventListener {
 
 
     private fun initButton() {
-        binding.nowLocation.setOnClickListener(){
-            goToNowLocation()
-            selectFishingSpot()
-        }
+        binding.nowLocation.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+
+//            binding.mapView.removeAllPOIItems()
+//            goToNowLocation()
+//            selectFishingSpot()
+
+//                howTogoSpot(37.50890350341797, 127.08074188232422)
+            }
+        })
 
         binding.addPin.setOnClickListener(){
-            goToNowLocation()
+            goToNowLocation(true)
             setPin()
         }
     }
@@ -156,7 +163,7 @@ class MainActivity : AppCompatActivity(), SendEventListener {
 
 
 
-    private fun goToNowLocation()
+    private fun goToNowLocation(goLocation : Boolean) : MapPoint?
     {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
@@ -168,7 +175,11 @@ class MainActivity : AppCompatActivity(), SendEventListener {
                 val uLongitude = userNowLocation.longitude
                 val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
 
-                binding.mapView.setMapCenterPoint(uNowPosition, true)
+                if (goLocation) {
+                    binding.mapView.setMapCenterPoint(uNowPosition, true)
+                }
+
+                return uNowPosition
 
             }catch(e: NullPointerException){
                 Log.e("LOCATION_ERROR", e.toString())
@@ -182,6 +193,7 @@ class MainActivity : AppCompatActivity(), SendEventListener {
             Toast.makeText(this, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
         }
+        return null
     }
 
     private fun permissionCheck() {
@@ -240,11 +252,33 @@ class MainActivity : AppCompatActivity(), SendEventListener {
         binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
     }
 
-    override fun sendFishList(s: ArrayList<String>) {
-        Toast.makeText(this, "message : $s",Toast.LENGTH_LONG).show()
+    private fun howTogoSpot(poiItem: MapPOIItem){
+        try {
+            val nowLocation = goToNowLocation(false)
+
+            if (nowLocation?.mapPointGeoCoord?.latitude.toString().isBlank() || nowLocation?.mapPointGeoCoord?.longitude.toString().isBlank()){
+                return
+            }
+
+            val url : String ="kakaomap://route?sp=${nowLocation?.mapPointGeoCoord?.latitude},${nowLocation?.mapPointGeoCoord?.longitude}&ep=${poiItem.mapPoint.mapPointGeoCoord.latitude},${poiItem.mapPoint.mapPointGeoCoord.longitude}&by=PUBLICTRANSIT"
+
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+            val list =
+                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            startActivity(intent)
+        }catch (e : ActivityNotFoundException){ // 카카오맵이 설치되어있지 않은경우 설치유도
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=net.daum.android.map")
+                )
+            )
+        }
     }
 
-    override fun sendPoiItemInfo(poiItem: MapPOIItem) {
-        
+    override fun sendPoiItem(poiItem: MapPOIItem) {
+        howTogoSpot(poiItem)
     }
 }

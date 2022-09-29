@@ -51,12 +51,13 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center">
+                    android:gravity="center">
                         <Button
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/customlayout_button_main"
+                            android:textColor="@color/white"
                             android:id="@+id/save_Button"
-                            android:layout_gravity="center"
                             android:text="저장"/>
                 </LinearLayout>
 

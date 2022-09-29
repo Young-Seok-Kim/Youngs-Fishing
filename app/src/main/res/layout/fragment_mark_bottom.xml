@@ -24,8 +24,9 @@
         <TextView
             android:id="@+id/spotName_textView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
             android:scrollHorizontally="true"
             android:ellipsize="marquee"
             android:fontFamily="@font/s_core_dream7"
@@ -37,7 +38,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="visible"
+            >
+
             <ImageButton
                 android:id="@+id/like_imageButton"
                 android:layout_width="wrap_content"
@@ -59,8 +62,18 @@
                 style="@style/TextView"
                 android:layout_marginEnd="20dp"
                 android:text="0"/>
-        </LinearLayout>
 
+        </LinearLayout>
+            <ImageButton
+                android:id="@+id/howToGoSpot_ImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/how_to_go"
+                android:background="@color/white"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:text="길찾기" />
 
         </LinearLayout>
         <TextView
