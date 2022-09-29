@@ -2,20 +2,15 @@ package com.youngs.common.kakao
 
 import android.app.Activity
 import android.content.Context
-import android.os.Bundle
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.youngs.common.Define
 import com.youngs.common.YoungsContextFunction.deleteFishingSpot
 import com.youngs.common.YoungsContextFunction.insertFishingSpot
 import com.youngs.common.YoungsContextFunction.updateFishingSpot
-import com.youngs.youngsfishing.R
 import com.youngs.youngsfishing.markbottom.MarkBottom
+import com.youngs.youngsfishing.fishinformation.FishInformation
 import com.youngs.youngsfishing.newspot.NewSpot
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -17,7 +18,9 @@ import com.youngs.common.YoungsFunction
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.common.recyclerview.RecyclerViewAdapter
+import com.youngs.youngsfishing.R
 import com.youngs.youngsfishing.databinding.FragmentMarkBottomBinding
+import com.youngs.youngsfishing.fishinformation.FishInformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -98,14 +101,18 @@ class MarkBottom(val poiItem: MapPOIItem) : BottomSheetDialogFragment() {
 
 
             MarkBottomAdapter.instance.setOnItemTapListener(object : RecyclerViewAdapter.OnItemTapListener{
+                override fun onSingleTap(position: Int) {
+                    FishInformation().let{
+//                        it.setStyle(DialogFragment.STYLE_NORMAL, R.style.FullDialogTheme)
+                        it.showNow(childFragmentManager,"")
+                    }
+
+                }
+
                 override fun onDoubleTap(position: Int) {
                 }
 
                 override fun onLongTap(position: Int){
-
-                }
-
-                override fun onSingleTap(position: Int) {
 
                 }
             })

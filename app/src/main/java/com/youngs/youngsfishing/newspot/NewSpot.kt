@@ -20,6 +20,7 @@ import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgress
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.FragmentNewSpotBinding
+import com.youngs.youngsfishing.fishinformation.FishInformationModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +28,6 @@ import kotlinx.coroutines.runBlocking
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
-import java.lang.ClassCastException
 
 class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) : DialogFragment() {
 
@@ -99,7 +99,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
                     if (jsonArray.toString() != "[\"\"]") {
                         val list = Gson().fromJson(
                             jsonArray.toString(),
-                            Array<NewSpotModel>::class.java
+                            Array<FishInformationModel>::class.java
                         )
 
                         for (item in list) {
@@ -185,7 +185,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
         return mPoiItem
     }
 
-    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, fish: NewSpotModel) : MapPOIItem?{
+    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, fish: FishInformationModel) : MapPOIItem?{
         MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,

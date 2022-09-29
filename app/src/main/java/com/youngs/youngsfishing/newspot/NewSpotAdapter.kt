@@ -6,8 +6,10 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.RecyclerviewNewSpotAppearFishListBinding
+import com.youngs.youngsfishing.fishinformation.FishInformationAdapter
+import com.youngs.youngsfishing.fishinformation.FishInformationModel
 
-class NewSpotAdapter: RecyclerViewAdapter<NewSpotModel, NewSpotAdapter.NewSpotViewHolder>() {
+class NewSpotAdapter: RecyclerViewAdapter<FishInformationModel, NewSpotAdapter.NewSpotViewHolder>() {
 
     inner class NewSpotViewHolder(private val binding: RecyclerviewNewSpotAppearFishListBinding): RecyclerView.ViewHolder(binding.root) {
         var fishCheckBox : CheckBox = binding.fishCheckBox
@@ -33,11 +35,11 @@ class NewSpotAdapter: RecyclerViewAdapter<NewSpotModel, NewSpotAdapter.NewSpotVi
     }
 
     private object SingletonHolder {
-        val INSTANCE = NewSpotAdapter()
+        val INSTANCE = FishInformationAdapter()
     }
 
     companion object {
-        val instance: NewSpotAdapter
+        val instance: FishInformationAdapter
             get() = SingletonHolder.INSTANCE
     }
 }
