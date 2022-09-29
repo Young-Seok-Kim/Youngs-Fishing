@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_dimen_height">10dp</dimen>
+    <dimen name="layout_dimen_width">10dp</dimen>
 </resources>

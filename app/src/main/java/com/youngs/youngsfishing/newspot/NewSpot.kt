@@ -29,7 +29,7 @@ import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
 import java.lang.ClassCastException
 
-class NewSpot(val poiItem: MapPOIItem,val activity : Activity) : DialogFragment() {
+class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) : DialogFragment() {
 
     private lateinit var binding: FragmentNewSpotBinding
     override fun onAttach(context: Context) {

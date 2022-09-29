@@ -121,17 +121,13 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
     private fun initButton() {
         binding.nowLocation.setOnClickListener(object : View.OnClickListener{
             override fun onClick(p0: View?) {
-
-//            binding.mapView.removeAllPOIItems()
-//            goToNowLocation()
-//            selectFishingSpot()
-
-//                howTogoSpot(37.50890350341797, 127.08074188232422)
+                binding.mapView.removeAllPOIItems()
+                goToNowLocation(true)
+                selectFishingSpot()
             }
         })
 
         binding.addPin.setOnClickListener(){
-            goToNowLocation(true)
             setPin()
         }
     }
@@ -147,7 +143,12 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
             val uLongitude = userNowLocation.longitude
             val myLocation : MapPoint = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
 
-            val marker: MapPOIItem = MapPOIItem()
+            val nowMapPoint = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
+
+            binding.mapView.setMapCenterPoint(nowMapPoint, true)
+
+            val marker : MapPOIItem = MapPOIItem()
+
             marker.apply {
                 isShowCalloutBalloonOnTouch = false
                 itemName = "신규 마커"
@@ -165,12 +166,15 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
 
     private fun goToNowLocation(goLocation : Boolean) : MapPoint?
     {
+        // goLocation 파라미터가 false면 단순히 현재 위치만 MapPoint로 반환해주고 True면 현재위치로 지도를 이동시켜준다.
+
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
             val lm: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
             try {
-                val userNowLocation: Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+                val userNowLocation: Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) ?: return null
+
                 val uLatitude = userNowLocation.latitude
                 val uLongitude = userNowLocation.longitude
                 val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
@@ -265,9 +269,8 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             intent.addCategory(Intent.CATEGORY_BROWSABLE)
 
-            val list =
-                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
             startActivity(intent)
+
         }catch (e : ActivityNotFoundException){ // 카카오맵이 설치되어있지 않은경우 설치유도
             startActivity(
                 Intent(
