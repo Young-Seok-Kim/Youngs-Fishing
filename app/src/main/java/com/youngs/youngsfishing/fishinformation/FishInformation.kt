@@ -28,6 +28,8 @@ class FishInformation() : DialogFragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentFishInformationBinding.inflate(layoutInflater, null, false)
 
+        binding.spotNameTextView.text = "${arguments?.getString("fish_name")} : ${arguments?.getString("fish_no")}번 물고기"
+
 
 //        initList()
 //        updateList()

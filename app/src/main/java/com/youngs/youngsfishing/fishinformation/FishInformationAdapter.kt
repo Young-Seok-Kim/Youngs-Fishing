@@ -6,7 +6,6 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.RecyclerviewNewSpotAppearFishListBinding
-import com.youngs.youngsfishing.newspot.NewSpotAdapter
 
 class FishInformationAdapter: RecyclerViewAdapter<FishInformationModel, FishInformationAdapter.FishInformationViewHolder>() {
 

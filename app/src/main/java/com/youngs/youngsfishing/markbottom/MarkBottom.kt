@@ -102,10 +102,16 @@ class MarkBottom(val poiItem: MapPOIItem) : BottomSheetDialogFragment() {
 
             MarkBottomAdapter.instance.setOnItemTapListener(object : RecyclerViewAdapter.OnItemTapListener{
                 override fun onSingleTap(position: Int) {
-                    FishInformation().let{
-//                        it.setStyle(DialogFragment.STYLE_NORMAL, R.style.FullDialogTheme)
+                    //                        it.setStyle(DialogFragment.STYLE_NORMAL, R.style.FullDialogTheme)
+                    FishInformation().let {
+                        val bundle = Bundle()
+                        bundle.putString("fish_name", MarkBottomAdapter.instance.currentItem?.fish_name)
+                        bundle.putString("fish_no", MarkBottomAdapter.instance.currentItem?.fish_no)
+
+                        it.arguments = bundle
                         it.showNow(childFragmentManager,"")
                     }
+
 
                 }
 

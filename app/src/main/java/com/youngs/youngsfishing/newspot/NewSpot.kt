@@ -20,7 +20,6 @@ import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgress
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.FragmentNewSpotBinding
-import com.youngs.youngsfishing.fishinformation.FishInformationModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,7 +98,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
                     if (jsonArray.toString() != "[\"\"]") {
                         val list = Gson().fromJson(
                             jsonArray.toString(),
-                            Array<FishInformationModel>::class.java
+                            Array<NewSpotModel>::class.java
                         )
 
                         for (item in list) {
@@ -170,6 +169,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
         jsonObject.addProperty("latitude", poiItem.mapPoint.mapPointGeoCoord.latitude)
         jsonObject.addProperty("longitude", poiItem.mapPoint.mapPointGeoCoord.longitude)
         jsonObject.addProperty("address", if (poiItem.userObject?.toString().isNullOrBlank()) "" else poiItem.userObject.toString())
+        jsonObject.addProperty("insert_date", YoungsFunction.getNowDate())
         jsonObject.addProperty("like", "0")
         jsonObject.addProperty("bad", "0")
 
@@ -185,7 +185,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
         return mPoiItem
     }
 
-    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, fish: FishInformationModel) : MapPOIItem?{
+    private suspend fun insertAppearFish(context: Context, poiItem: MapPOIItem, fish: NewSpotModel) : MapPOIItem?{
         MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,
@@ -199,10 +199,11 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
         jsonObject.addProperty("fish_name", fish.fish_name)
         jsonObject.addProperty("spot_no", poiItem.tag)
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject, context)
-                }.join()
+        CoroutineScope(Dispatchers.IO).launch {
+            NetworkConnect.connectHTTPSSync("insertAppearFish.do", jsonObject, context)
+        }.join()
 
+        
         endProgress()
         return mPoiItem
     }
@@ -217,10 +218,10 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
             binding.listview.visibility = View.GONE
         }
     }
+
     private fun endProgress()
     {
         val progress = NetworkProgress()
-
         dialog?.window?.let {
             progress.endProgressBar(binding.progressbar,it)
             binding.spotNameEditText.visibility = View.VISIBLE

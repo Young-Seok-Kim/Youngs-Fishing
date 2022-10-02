@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/how_to_go"
+                android:src="@drawable/how_to_go_word"
                 android:layout_marginEnd="@dimen/layout_dimen_width"
                 android:background="@color/white"
                 android:gravity="center"

@@ -124,6 +124,14 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
                 binding.mapView.removeAllPOIItems()
                 goToNowLocation(true)
                 selectFishingSpot()
+
+                if (checkLocationService()) {
+                    // GPS가 켜져있을 경우
+                    permissionCheck()
+                } else {
+                    // GPS가 꺼져있을 경우
+                    Toast.makeText(applicationContext, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
+                }
             }
         })
 
@@ -248,7 +256,10 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
 
     // 위치추적 시작
     private fun startTracking() {
-        binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+        if(binding.mapView.currentLocationTrackingMode == MapView.CurrentLocationTrackingMode.TrackingModeOff)
+            binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+        else
+            stopTracking()
     }
 
     // 위치추적 중지
@@ -264,7 +275,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
                 return
             }
 
-            val url : String ="kakaomap://route?sp=${nowLocation?.mapPointGeoCoord?.latitude},${nowLocation?.mapPointGeoCoord?.longitude}&ep=${poiItem.mapPoint.mapPointGeoCoord.latitude},${poiItem.mapPoint.mapPointGeoCoord.longitude}&by=PUBLICTRANSIT"
+            val url : String ="kakaomap://route?sp=${nowLocation?.mapPointGeoCoord?.latitude},${nowLocation?.mapPointGeoCoord?.longitude}&ep=${poiItem.mapPoint.mapPointGeoCoord.latitude},${poiItem.mapPoint.mapPointGeoCoord.longitude}&by=CAR"
 
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             intent.addCategory(Intent.CATEGORY_BROWSABLE)

@@ -100,7 +100,7 @@ object NetworkConnect {
 
         val okHttpClient = OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS).readTimeout(5,TimeUnit.SECONDS).writeTimeout(5,TimeUnit.SECONDS).build()
 
-        val retrofit =Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
+        val retrofit = Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()
 //            if (BuildConfig.DEBUG)
 //        { // connectURL 에 접근하기 위한 변수
 //            Retrofit.Builder().baseUrl(connectURL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create()).build()

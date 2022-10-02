@@ -10,7 +10,6 @@ import com.youngs.common.YoungsContextFunction.deleteFishingSpot
 import com.youngs.common.YoungsContextFunction.insertFishingSpot
 import com.youngs.common.YoungsContextFunction.updateFishingSpot
 import com.youngs.youngsfishing.markbottom.MarkBottom
-import com.youngs.youngsfishing.fishinformation.FishInformation
 import com.youngs.youngsfishing.newspot.NewSpot
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
