@@ -56,13 +56,13 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
 
         selectFishingSpot()
 
-//        if (checkLocationService()) {
-//            // GPS가 켜져있을 경우
-//            permissionCheck()
-//        } else {
-//            // GPS가 꺼져있을 경우
-//            Toast.makeText(this, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
-//        }
+        if (checkLocationService()) {
+            // GPS가 켜져있을 경우
+            permissionCheck(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading)
+        } else {
+            // GPS가 꺼져있을 경우
+            Toast.makeText(this, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun selectFishingSpot() {
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
 
                 if (checkLocationService()) {
                     // GPS가 켜져있을 경우
-                    permissionCheck()
+                    permissionCheck(MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading)
                 } else {
                     // GPS가 꺼져있을 경우
                     Toast.makeText(applicationContext, "GPS를 켜주세요", Toast.LENGTH_SHORT).show()
@@ -208,7 +208,8 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
         return null
     }
 
-    private fun permissionCheck() {
+    private fun permissionCheck(trackingMode: MapView.CurrentLocationTrackingMode) {
+
         val preference = getPreferences(MODE_PRIVATE)
         val isFirstCheck = preference.getBoolean("isFirstPermissionCheck", true)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -245,7 +246,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
             }
         } else {
             // 권한이 있는 상태
-            startTracking()
+            startTracking(trackingMode)
         }
     }
     // GPS가 켜져있는지 확인
@@ -255,9 +256,9 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
     }
 
     // 위치추적 시작
-    private fun startTracking() {
+    private fun startTracking(trackingMode: MapView.CurrentLocationTrackingMode) {
         if(binding.mapView.currentLocationTrackingMode == MapView.CurrentLocationTrackingMode.TrackingModeOff)
-            binding.mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+            binding.mapView.currentLocationTrackingMode = trackingMode
         else
             stopTracking()
     }
