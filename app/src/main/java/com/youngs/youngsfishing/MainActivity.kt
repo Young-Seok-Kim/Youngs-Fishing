@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
                             marker.apply {
                                 isShowCalloutBalloonOnTouch = false // 해당값을 false로 놓으면 마커 클릭시 말풍선이 나오지않는다.
                                 itemName = (jsonArray.get(i) as JSONObject?)?.get("spot_name")?.toString()
-                                tag = (jsonArray.get(i) as JSONObject).get("spot_no").toString().toInt()
+                                tag = (jsonArray.get(i) as JSONObject?)?.get("spot_no").toString().toInt()
                                 userObject = (jsonArray.get(i) as JSONObject?)?.get("address")?.toString()
                                 mapPoint = fishingSpot
                                 markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커11 모양.

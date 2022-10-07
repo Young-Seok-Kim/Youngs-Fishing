@@ -70,6 +70,9 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
                     if (NewSpotAdapter.instance._arrayList[i].isChecked) {
                         selectFishList.add(NewSpotAdapter.instance._arrayList[i].fish_name)
                         insertPOI?.let { it ->
+                            if (insertPOI.tag == 0)
+                                return@let
+
                             insertAppearFish(
                                 this@NewSpot.requireContext(),
                                 it,

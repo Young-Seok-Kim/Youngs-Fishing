@@ -5,9 +5,12 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
 import com.youngs.common.kakao.FindGeoToAddressListener
+import com.youngs.youngsfishing.R
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
@@ -171,7 +174,7 @@ object YoungsFunction {
         ).show()
     }
 
-    private fun setTime(context: Context?, tv: TextView, divider: String) {
+    fun setTime(context: Context?, tv: TextView, divider: String) {
         val cal = Calendar.getInstance()
         val hour = cal[Calendar.HOUR_OF_DAY]
         val minute = cal[Calendar.MINUTE]
@@ -188,5 +191,17 @@ object YoungsFunction {
             minute,
             true
         ).show()
+    }
+
+    fun setImage(context: Context, imageView : ImageView, url : String){
+        val defaultImage = R.drawable.click_like
+
+        Glide.with(context)
+            .load(url) // 불러올 이미지 url
+            .placeholder(defaultImage) // 이미지 로딩 시작하기 전 표시할 이미지
+            .error(defaultImage) // 로딩 에러 발생 시 표시할 이미지
+            .fallback(defaultImage) // 로드할 url 이 비어있을(null 등) 경우 표시할 이미지
+            .circleCrop() // 동그랗게 자르기
+            .into(imageView) // 이미지를 넣을 뷰
     }
 }

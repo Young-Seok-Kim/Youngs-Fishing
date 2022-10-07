@@ -14,7 +14,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.youngs.common.Define
 import com.youngs.common.YoungsFunction
+import com.youngs.common.kakao.FindGeoToAddressListener
+import com.youngs.common.kakao.MarkerEventListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
 import com.youngs.common.recyclerview.RecyclerViewAdapter
@@ -25,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapReverseGeoCoder
 import org.json.JSONArray
 import java.lang.ClassCastException
 
@@ -46,7 +50,12 @@ class MarkBottom(val poiItem: MapPOIItem) : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentMarkBottomBinding.inflate(layoutInflater,null,false)
-
+        val reverseGeoCoder: MapReverseGeoCoder = MapReverseGeoCoder(
+            Define.KAKAO_NATIVE_KEY,
+            poiItem.mapPoint,
+            FindGeoToAddressListener(poiItem), // 위도, 경도로 주소찾기, poiItem의 userObject에 주소가 저장된다.
+            requireActivity()
+        )
         binding.spotNameTextView.text = poiItem.itemName
         binding.spotAddressTextView.text = (poiItem.userObject?:"").toString()
         binding.spotNameTextView.isSelected = true

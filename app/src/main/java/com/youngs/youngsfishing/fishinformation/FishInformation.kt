@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.google.gson.JsonObject
 import com.youngs.common.Define
+import com.youngs.common.YoungsFunction
 import com.youngs.common.kakao.FindGeoToAddressListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.youngsfishing.databinding.FragmentFishInformationBinding
@@ -29,6 +30,8 @@ class FishInformation() : DialogFragment() {
         binding = FragmentFishInformationBinding.inflate(layoutInflater, null, false)
 
         binding.spotNameTextView.text = "${arguments?.getString("fish_name")} : ${arguments?.getString("fish_no")}번 물고기"
+
+        YoungsFunction.setImage(requireContext(), binding.imageView,"https://i.ibb.co/fvpgbs4/android.png")
 
 
 //        initList()

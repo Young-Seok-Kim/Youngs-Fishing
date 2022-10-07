@@ -117,7 +117,7 @@ class MarkerEventListener(
         MarkBottom(poiItem).showNow(fragmentManagerParam, "")
     }
 
-    fun findAddress(poiItem: MapPOIItem) {
+    private fun findAddress(poiItem: MapPOIItem) {
         val reverseGeoCoder: MapReverseGeoCoder = MapReverseGeoCoder(
             Define.KAKAO_NATIVE_KEY,
             poiItem.mapPoint,

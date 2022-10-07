@@ -22,10 +22,12 @@
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/customlayout_floating_button.xml" value="0.3333333333333333" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/customlayout_textview.xml" value="0.3333333333333333" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/customlayout_textview_top.xml" value="0.3333333333333333" />
+        <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/fragment_fish_information.xml" value="0.2368659420289855" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/fragment_mark_bottom.xml" value="0.3333333333333333" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/fragment_new_spot.xml" value="0.2015625" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/mark_bottom_fragment.xml" value="0.2015625" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/new_spot_fragment.xml" value="0.3333333333333333" />
+        <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/recyclerview_fish_information.xml" value="0.3333333333333333" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/layout/recyclerview_new_spot_appear_fish_list.xml" value="0.2015625" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2845" />
         <entry key="..\:/Project/kotlin/YoungsFishing/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2845" />
