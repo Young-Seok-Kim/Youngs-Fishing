@@ -73,7 +73,7 @@ class MarkBottom(val poiItem: MapPOIItem) : BottomSheetDialogFragment() {
     }
 
     private fun updateList() {
-        val jsonObject : JsonObject = JsonObject()
+        val jsonObject :  JsonObject = JsonObject()
         jsonObject.addProperty("spot_no", poiItem.tag)
         NetworkProgressDialog.start(requireContext())
         CoroutineScope(Dispatchers.Default).launch {
