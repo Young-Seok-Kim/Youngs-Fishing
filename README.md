@@ -2,7 +2,7 @@
 낚시 스팟을 알려주는 앱
 
 사용기술
-MyBatis 3.5.7 , MySQL , Spring, AWS(EC2, RDS), 카카오 API
+MyBatis 3.5.7 , MySQL , Spring, 카카오 API
 
 클라이언트 사용언어 : Koltin, 서버 사용언어 : Java
 
