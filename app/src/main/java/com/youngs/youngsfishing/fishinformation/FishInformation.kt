@@ -29,9 +29,9 @@ class FishInformation() : DialogFragment() {
         super.onCreate(savedInstanceState)
         binding = FragmentFishInformationBinding.inflate(layoutInflater, null, false)
 
-        binding.spotNameTextView.text = "${arguments?.getString("fish_name")} : ${arguments?.getString("fish_no")}번 물고기"
+        binding.spotNameTextView.text = "${arguments?.getString("fish_name")}"
 
-        YoungsFunction.setImage(requireContext(), binding.imageView,"https://i.ibb.co/fvpgbs4/android.png")
+        YoungsFunction.setImage(requireContext(), binding.imageView,"https://i.ibb.co/2Fwnx1G/fish.jpg")
 
 
 //        initList()
