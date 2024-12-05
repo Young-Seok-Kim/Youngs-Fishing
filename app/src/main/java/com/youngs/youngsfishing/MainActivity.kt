@@ -24,6 +24,7 @@ import com.youngs.common.YoungsFunction
 import com.youngs.common.kakao.MarkerEventListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgressDialog
+import com.youngs.common.network.YoungsProgressBar
 import com.youngs.youngsfishing.databinding.ActivityMainBinding
 import com.youngs.youngsfishing.markbottom.MarkBottomCustomListener
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
     lateinit var binding : ActivityMainBinding
 
     private val eventListener = MarkerEventListener(this@MainActivity,this, supportFragmentManager)
-
+    val youngsProgressBar: YoungsProgressBar by lazy { YoungsProgressBar(this@MainActivity) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
     private fun selectFishingSpot() {
         val jsonObject : JsonObject = JsonObject()
 //        jsonObject.addProperty("CODE", Define.NOW_LOGIN_USER_CODE)
-        NetworkProgressDialog.start(this@MainActivity)
+        youngsProgressBar.show()
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("selectFishingSpot.do",
                 jsonObject,
@@ -107,10 +108,10 @@ class MainActivity : AppCompatActivity(), MarkBottomCustomListener {
                         ActivityCompat.requestPermissions(this@MainActivity, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE )
                     }
 
-                    NetworkProgressDialog.end()
+                    youngsProgressBar.dismiss()
                 }
                 , onFailure = {
-                    NetworkProgressDialog.end()
+                    youngsProgressBar.dismiss()
                 }
             )
         }

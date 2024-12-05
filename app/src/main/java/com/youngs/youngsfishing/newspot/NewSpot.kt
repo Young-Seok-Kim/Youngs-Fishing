@@ -18,6 +18,7 @@ import com.youngs.common.YoungsFunction
 import com.youngs.common.kakao.FindGeoToAddressListener
 import com.youngs.common.network.NetworkConnect
 import com.youngs.common.network.NetworkProgress
+import com.youngs.common.network.YoungsProgressBar
 import com.youngs.common.recyclerview.RecyclerViewAdapter
 import com.youngs.youngsfishing.databinding.FragmentNewSpotBinding
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,8 @@ import org.json.JSONArray
 class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) : DialogFragment() {
 
     private lateinit var binding: FragmentNewSpotBinding
+    private val youngsProgressBar: YoungsProgressBar by lazy { YoungsProgressBar(requireContext())}
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
     }
@@ -88,7 +91,9 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
 
     private fun updateList() {
         val jsonObject: JsonObject = JsonObject()
-        startProgress()
+
+        youngsProgressBar.show()
+
         CoroutineScope(Dispatchers.Default).launch {
             NetworkConnect.connectHTTPS("selectFishList.do",
                 jsonObject,
@@ -108,9 +113,9 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
                             NewSpotAdapter.instance.addItem(item)
                         }
                     }
-                    endProgress()
+                    youngsProgressBar.dismiss()
                 }, onFailure = {
-                    endProgress()
+                    youngsProgressBar.dismiss()
                     dismiss()
                 }
             )
@@ -165,7 +170,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
 
     private suspend fun insertFishingSpot(context: Context, poiItem: MapPOIItem, spotName: String?) : MapPOIItem?{
         var mPoiItem : MapPOIItem?  = null
-        startProgress()
+        youngsProgressBar.show()
 
         val jsonObject: JsonObject = JsonObject()
         jsonObject.addProperty("spot_name", if(spotName.isNullOrBlank()) poiItem.itemName else spotName)
@@ -184,7 +189,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
             mPoiItem = poiItem
         }.join()
 
-        endProgress()
+        youngsProgressBar.dismiss()
         return mPoiItem
     }
 
@@ -195,7 +200,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
             FindGeoToAddressListener(poiItem), // 위도, 경도로 주소찾기, poiItem의 userObject에 주소가 저장된다.
             activity
         )
-        startProgress()
+        youngsProgressBar.show()
         val mPoiItem : MapPOIItem? = null
         val jsonObject: JsonObject = JsonObject()
         jsonObject.addProperty("fish_no", fish.fish_no)
@@ -207,29 +212,7 @@ class NewSpot(private val poiItem: MapPOIItem, private val activity : Activity) 
         }.join()
 
         
-        endProgress()
+        youngsProgressBar.dismiss()
         return mPoiItem
-    }
-
-    private fun startProgress()
-    {
-        val progress = NetworkProgress()
-        dialog?.window?.let {
-            progress.startProgress(binding.progressbar,it)
-            binding.spotNameEditText.visibility = View.GONE
-            binding.saveButton.visibility = View.GONE
-            binding.listview.visibility = View.GONE
-        }
-    }
-
-    private fun endProgress()
-    {
-        val progress = NetworkProgress()
-        dialog?.window?.let {
-            progress.endProgressBar(binding.progressbar,it)
-            binding.spotNameEditText.visibility = View.VISIBLE
-            binding.saveButton.visibility = View.VISIBLE
-            binding.listview.visibility = View.VISIBLE
-        }
     }
 }
